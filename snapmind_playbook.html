@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SnapMind — 5-Min Presentation Playbook</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #f5f4f0;
+    color: #1a1a1a;
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  /* ── SIDEBAR ── */
+  .layout { display: flex; min-height: 100vh; }
+
+  .sidebar {
+    width: 220px;
+    background: #1c1b2e;
+    padding: 28px 0;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    z-index: 10;
+  }
+
+  .sidebar-logo {
+    padding: 0 24px 24px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    margin-bottom: 16px;
+  }
+  .sidebar-logo h2 { font-size: 16px; font-weight: 600; color: #fff; }
+  .sidebar-logo p  { font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 2px; }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 24px;
+    cursor: pointer;
+    border: none;
+    background: none;
+    text-align: left;
+    width: 100%;
+    transition: background 0.15s;
+    position: relative;
+  }
+  .nav-item:hover { background: rgba(255,255,255,0.05); }
+  .nav-item.active { background: rgba(127,119,221,0.18); }
+  .nav-item.active::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: #7F77DD;
+    border-radius: 0 2px 2px 0;
+  }
+  .nav-dot {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.5);
+    flex-shrink: 0;
+    transition: all 0.2s;
+  }
+  .nav-item.active .nav-dot { background: #7F77DD; color: #fff; }
+  .nav-item.done .nav-dot  { background: #1D9E75; color: #fff; }
+  .nav-label { font-size: 13px; color: rgba(255,255,255,0.6); }
+  .nav-item.active .nav-label { color: #fff; font-weight: 500; }
+  .nav-time { font-size: 11px; color: rgba(255,255,255,0.3); margin-top: 1px; }
+
+  .sidebar-footer {
+    margin-top: auto;
+    padding: 16px 24px 0;
+    border-top: 1px solid rgba(255,255,255,0.08);
+  }
+  .sidebar-footer p { font-size: 11px; color: rgba(255,255,255,0.3); line-height: 1.5; }
+
+  /* ── MAIN ── */
+  .main { margin-left: 220px; padding: 40px 48px; max-width: 900px; }
+
+  /* ── HEADER STRIP ── */
+  .phase-header {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    margin-bottom: 28px;
+    flex-wrap: wrap; gap: 12px;
+  }
+  .phase-title-block {}
+  .phase-eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #7F77DD; margin-bottom: 6px; }
+  .phase-title   { font-size: 28px; font-weight: 700; color: #1a1a1a; line-height: 1.2; }
+  .phase-goal    { font-size: 15px; color: #555; margin-top: 8px; line-height: 1.6; max-width: 560px; }
+  .timer-badge {
+    background: #1c1b2e;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 12px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+  .timer-time { font-size: 18px; font-weight: 700; color: #a09aff; }
+  .timer-secs { font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 2px; }
+
+  /* ── PROGRESS ── */
+  .progress-track {
+    display: flex; gap: 4px; margin-bottom: 32px;
+  }
+  .progress-seg {
+    flex: 1; height: 4px; border-radius: 2px;
+    background: #ddd;
+    transition: background 0.3s;
+  }
+  .progress-seg.active { background: #7F77DD; }
+  .progress-seg.done   { background: #1D9E75; }
+
+  /* ── SCRIPT CARDS ── */
+  .section-label {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.1em;
+    text-transform: uppercase; color: #999; margin-bottom: 12px;
+  }
+
+  .script-card {
+    background: #fff;
+    border: 1px solid #e8e6e0;
+    border-radius: 14px;
+    padding: 20px 24px;
+    margin-bottom: 14px;
+    position: relative;
+  }
+  .script-say {
+    display: inline-block;
+    font-size: 11px; font-weight: 600; letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: #e9f7f1; color: #0F6E56;
+    padding: 3px 10px; border-radius: 20px;
+    margin-bottom: 12px;
+  }
+  .script-text {
+    font-size: 15px; line-height: 1.75; color: #1a1a1a;
+    font-style: italic;
+  }
+
+  /* ── TIPS ── */
+  .tips-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 12px; margin-bottom: 28px;
+  }
+  @media (max-width: 640px) { .tips-grid { grid-template-columns: 1fr; } }
+
+  .tip-card {
+    background: #fff;
+    border: 1px solid #e8e6e0;
+    border-radius: 12px;
+    padding: 14px 16px;
+    display: flex; gap: 10px; align-items: flex-start;
+    cursor: pointer;
+    transition: border-color 0.15s;
+  }
+  .tip-card:hover { border-color: #7F77DD; }
+  .tip-card.checked { border-color: #1D9E75; background: #f0faf6; }
+  .tip-checkbox {
+    width: 20px; height: 20px; border-radius: 5px;
+    border: 1.5px solid #ccc;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; margin-top: 1px;
+    transition: all 0.15s;
+  }
+  .tip-card.checked .tip-checkbox { background: #1D9E75; border-color: #1D9E75; }
+  .tip-checkbox svg { display: none; }
+  .tip-card.checked .tip-checkbox svg { display: block; }
+  .tip-body { font-size: 13px; line-height: 1.6; color: #555; }
+  .tip-body strong { color: #1a1a1a; font-weight: 600; }
+  .tip-card.checked .tip-body { text-decoration: line-through; color: #aaa; }
+
+  /* ── Q&A ── */
+  .qa-item {
+    background: #fff;
+    border: 1px solid #e8e6e0;
+    border-radius: 12px;
+    margin-bottom: 10px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: border-color 0.15s;
+  }
+  .qa-item:hover { border-color: #7F77DD; }
+  .qa-item.open  { border-color: #7F77DD; }
+  .qa-q {
+    padding: 14px 18px;
+    font-size: 14px; font-weight: 600; color: #1a1a1a;
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 12px;
+  }
+  .qa-arrow { color: #7F77DD; font-size: 16px; transition: transform 0.2s; flex-shrink: 0; }
+  .qa-item.open .qa-arrow { transform: rotate(90deg); }
+  .qa-a {
+    display: none;
+    padding: 0 18px 16px;
+    font-size: 14px; line-height: 1.7; color: #444;
+    border-top: 1px solid #f0ede8;
+    padding-top: 12px;
+  }
+  .qa-item.open .qa-a { display: block; }
+
+  /* ── BOTTOM NAV ── */
+  .bottom-nav {
+    display: flex; gap: 12px; margin-top: 40px; padding-top: 24px;
+    border-top: 1px solid #e8e6e0;
+  }
+  .btn {
+    padding: 12px 28px; border-radius: 10px; font-size: 15px; font-weight: 600;
+    cursor: pointer; border: none; transition: all 0.15s;
+  }
+  .btn-prev { background: #fff; border: 1.5px solid #ddd; color: #555; }
+  .btn-prev:hover { border-color: #7F77DD; color: #7F77DD; }
+  .btn-prev:disabled { opacity: 0.35; cursor: not-allowed; }
+  .btn-next { background: #7F77DD; color: #fff; flex: 1; }
+  .btn-next:hover { background: #534AB7; }
+
+  /* ── OVERVIEW (phase 5 / last) ── */
+  .three-col { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 20px; }
+  @media (max-width: 640px) { .three-col { grid-template-columns: 1fr; } }
+  .stat-card {
+    background: #fff; border: 1px solid #e8e6e0; border-radius: 12px;
+    padding: 16px; text-align: center;
+  }
+  .stat-num { font-size: 28px; font-weight: 700; color: #7F77DD; }
+  .stat-lbl { font-size: 12px; color: #999; margin-top: 2px; }
+
+  .warn-box {
+    background: #fffbf0; border: 1px solid #f5d87a; border-radius: 12px;
+    padding: 16px 20px; margin-bottom: 14px;
+    font-size: 14px; line-height: 1.6; color: #5c4500;
+  }
+  .warn-box strong { font-weight: 600; }
+
+  .green-box {
+    background: #f0faf6; border: 1px solid #a5dfc3; border-radius: 12px;
+    padding: 16px 20px; margin-bottom: 14px;
+    font-size: 14px; line-height: 1.6; color: #0a3d28;
+  }
+
+  /* ── PAGE HIDDEN ── */
+  .page { display: none; }
+  .page.active { display: block; }
+</style>
+</head>
+<body>
+
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <div class="sidebar-logo">
+      <h2>SnapMind 🧠</h2>
+      <p>Presentation Playbook</p>
+    </div>
+
+    <button class="nav-item active" id="nav-0" onclick="goTo(0)">
+      <div class="nav-dot">1</div>
+      <div>
+        <div class="nav-label">Hook</div>
+        <div class="nav-time">0:00 – 0:45</div>
+      </div>
+    </button>
+    <button class="nav-item" id="nav-1" onclick="goTo(1)">
+      <div class="nav-dot">2</div>
+      <div>
+        <div class="nav-label">Architecture</div>
+        <div class="nav-time">0:45 – 2:00</div>
+      </div>
+    </button>
+    <button class="nav-item" id="nav-2" onclick="goTo(2)">
+      <div class="nav-dot">3</div>
+      <div>
+        <div class="nav-label">Features Demo</div>
+        <div class="nav-time">2:00 – 3:30</div>
+      </div>
+    </button>
+    <button class="nav-item" id="nav-3" onclick="goTo(3)">
+      <div class="nav-dot">4</div>
+      <div>
+        <div class="nav-label">Differentiation</div>
+        <div class="nav-time">3:30 – 4:30</div>
+      </div>
+    </button>
+    <button class="nav-item" id="nav-4" onclick="goTo(4)">
+      <div class="nav-dot">5</div>
+      <div>
+        <div class="nav-label">Close + Q&amp;A</div>
+        <div class="nav-time">4:30 – 6:00</div>
+      </div>
+    </button>
+
+    <div class="sidebar-footer">
+      <p>Click each phase to rehearse. Check off tips as you go.</p>
+    </div>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <main class="main">
+
+    <!-- PROGRESS BAR -->
+    <div class="progress-track">
+      <div class="progress-seg active" id="seg-0"></div>
+      <div class="progress-seg" id="seg-1"></div>
+      <div class="progress-seg" id="seg-2"></div>
+      <div class="progress-seg" id="seg-3"></div>
+      <div class="progress-seg" id="seg-4"></div>
+    </div>
+
+    <!-- ═══ PAGE 0: HOOK ═══ -->
+    <div class="page active" id="page-0">
+      <div class="phase-header">
+        <div class="phase-title-block">
+          <div class="phase-eyebrow">Phase 1 of 5</div>
+          <div class="phase-title">The hook — make them lean in</div>
+          <div class="phase-goal">Open with a relatable pain-point. Don't explain what you built yet. No jargon for the first 30 seconds.</div>
+        </div>
+        <div class="timer-badge">
+          <div class="timer-time">0:00 – 0:45</div>
+          <div class="timer-secs">45 seconds</div>
+        </div>
+      </div>
+
+      <div class="section-label">Your script — say this out loud</div>
+
+      <div class="script-card">
+        <div class="script-say">Opening line — memorize this</div>
+        <div class="script-text">"Every time I open a new tab to research something, I lose context. My notes are scattered, my browser history is useless, and after 2 hours I have thirty tabs but no synthesis. Sound familiar?"</div>
+      </div>
+
+      <div class="script-card">
+        <div class="script-say">The pivot — what you built</div>
+        <div class="script-text">"SnapMind turns your browser into a brain that actually remembers — and reasons about — everything you research. It indexes the web as you browse, builds a semantic knowledge graph, and answers questions across everything you've ever read."</div>
+      </div>
+
+      <div class="section-label" style="margin-top:24px;">Delivery checklist — click to check off</div>
+      <div class="tips-grid">
+        <div class="tip-card" onclick="toggleTip(this)">
+          <div class="tip-checkbox"><svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.5L3.8 7.5L10 1" stroke="white" stroke-width="2" fill="none" stroke-linecap="round"/></svg></div>
+          <div class="tip-body"><strong>Pause after the first question.</strong> Let the judge nod. That pause is your hook working.</div>
+        </div>
+        <div class="tip-card" onclick="toggleTip(this)">
+          <div class="tip-checkbox"><svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.5L3.8 7.5L10 1" stroke="white" stroke-width="2" fill="none" stroke-linecap="round"/></svg></div>
+          <div class="tip-body"><strong>No slides needed here.</strong> Just look at them directly and speak from memory.</div>
+        </div>
+        <div class="tip-card" onclick="toggleTip(this)">
+          <div class="tip-checkbox"><svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.5L3.8 7.5L10 1" stroke="white" stroke-width="2" fill="none" stroke-linecap="round"/></svg></div>
+          <div class="tip-body"><strong>Never say "RAG", "pgvector", or "embeddings"</strong> in the first 30 seconds. Build the why before the what.</div>
+        </div>
+        <div class="tip-card" onclick="toggleTip(this)">
+          <div class="tip-checkbox"><svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.5L3.8 7.5L10 1" stroke="white" stroke-width="2" fill="none" stroke-linecap="round"/></svg></div>
+          <div class="tip-body"><strong>Slow down on "Sound familiar?"</strong> — let the question breathe before pivoting.</div>
+        </div>
+      </div>
+
+      <div class="bottom-nav">
+        <button class="btn btn-prev" disabled>← Previous</button>
+        <button class="btn btn-next" onclick="goTo(1)">Architecture →</button>
+      </div>
+    </div>
+
+    <!-- ═══ PAGE 1: ARCHITECTURE ═══ -->
+    <div class="page" id="page-1">
+      <div class="phase-header">
+        <div class="phase-title-block">
+          <div class="phase-eyebrow">Phase 2 of 5</div>
+          <div class="phase-title">The architecture — show you built it</div>
+          <div class="phase-goal">Convey the three layers clearly and fast. Use your diagram. Don't read from it — point and talk.</div>
+        </div>
+        <div class="timer-badge">
+          <div class="timer-time">0:45 – 2:00</div>
+          <div class="timer-secs">75 seconds</div>
+        </div>
+      </div>
+
+      <div class="section-label">Your script</div>
+
+      <div class="script-card">
+        <div class="script-say">The three layers — point to diagram while saying this</div>
+        <div class="script-text">"SnapMind has three layers. A Chrome extension that sits on every page you visit. A FastAPI backend with 20+ endpoints handling ingestion, retrieval, and generation. And a Supabase + pgvector database that stores both relational metadata and dense vector embeddings."</div>
+      </div>
+
+      <div class="script-card">
+        <div class="script-say">The data flow — one breath, fast</div>
+        <div class="script-text">"When you visit a page, Firecrawl scrapes it, our semantic chunker splits it into 800-character segments, Gemini embeds each chunk as a 3072-dimension vector, and it's stored. When you ask a question, we run hybrid search — 70% vector cosine similarity, 30% BM25 keyword — rerank with a Cohere cross-encoder, compress the context, and stream the answer back token by token."</div>
+      </div>
+
+      <div class="section-label" style="margin-top:24px;">Delivery checklist</div>
+      <div class="tips-grid">
+        <div class="tip-card" onclick="toggleTip(this)">
+          <div class="tip-checkbox"><svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.5L3.8 7.5L10 1" stroke="white" stroke-width="2" fill="none" stroke-linecap="round"/></svg></div>
+          <div class="tip-body"><strong>Show the Mermaid architecture diagram on screen.</strong> Point to Chrome → FastAPI → Supabase while you speak.</div>
+        </div>
+        <div class="tip-card" onclick="toggleTip(this)">
+          <div class="tip-checkbox"><svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.5L3.8 7.5L10 1" stroke="white" stroke-width="2" fill="none" stroke-linecap="round"/></svg></div>
+          <div class="tip-body"><strong>Speed through the layers.</strong> This section signals technical depth — don't over-explain every component.</div>
+        </div>
+        <div class="tip-card" onclick="toggleTip(this)">
+          <div class="tip-checkbox"><svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.5L3.8 7.5L10 1" stroke="white" stroke-width="2" fill="none" stroke-linecap="round"/></svg></div>
+          <div class="tip-body"><strong>Say "3072-dimension vector"</strong> — specific numbers signal real implementation, not a tutorial project.</div>
+        </div>
+        <div class="tip-card" onclick="toggleTip(this)">
+          <div class="tip-checkbox"><svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.5L3.8 7.5L10 1" stroke="white" stroke-width="2" fill="none" stroke-linecap="round"/></svg></div>
+          <div class="tip-body"><strong>Don't explain what RAG is.</strong> Assume the judge knows. If they don't, they'll ask.</div>
+        </div>
+      </div>
+
+      <div class="bottom-nav">
+        <button class="btn btn-prev" onclick="goTo(0)">← Hook</button>
+        <button class="btn btn-next" onclick="goTo(2)">Features Demo →</button>
+      </div>
+    </div>
+
+    <!-- ═══ PAGE 2: FEATURES ═══ -->
+    <div class="page" id="page-2">
+      <div class="phase-header">
+        <div class="phase-title-block">
+          <div class="phase-eyebrow">Phase 3 of 5</div>
+          <div class="phase-title">The demo — show, don't tell</div>
+          <div class="phase-goal">Three demos, ~25 seconds each. Move fast. Build intensity: speed → depth → output.</div>
+        </div>
+        <div class="timer-badge">
+          <div class="timer-time">2:00 – 3:30</div>
+          <div class="timer-secs">90 seconds</div>
+        </div>
+      </div>
+
+      <div class="section-label">Your script</div>
+
+      <div class="script-card">
+        <div class="script-say">Demo 1 — Multi-agent browser mode (show it running)</div>
+        <div class="script-text">"Watch what happens when I ask about something not in my index. Five agents spin up automatically: one analyzes my query, one searches the web, one ranks results by relevance, one scrapes the top pages, and a synthesis agent builds a cited answer — all under 10 seconds. Every scraped page is also silently indexed into the RAG database for future queries."</div>
+      </div>
+
+      <div class="script-card">
+        <div class="script-say">Demo 2 — Knowledge graph (switch to graph view)</div>
+        <div class="script-text">"But here's what makes it different from any chatbot. As it reads, it extracts entities and relationships and builds this force-directed knowledge graph in real time. I can see how concepts from three different papers are connected — and query across those connections."</div>
+      </div>
+
+      <div class="script-card">
+        <div class="script-say">Demo 3 — Research report (trigger the export)</div>
+        <div class="script-text">"Finally — one command generates a complete academic paper from everything I've researched: abstract, literature review, methodology, findings, and references with source URLs. It outputs a formatted DOCX. This alone saves 4–5 hours on any research project."</div>
+      </div>
+
+      <div class="section-label" style="margin-top:24px;">Delivery checklist</div>
+      <div class="tips-grid">
+        <div class="tip-card" onclick="toggleTip(this)">
+          <div class="tip-checkbox"><svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.5L3.8 7.5L10 1" stroke="white" stroke-width="2" fill="none" stroke-linecap="round"/></svg></div>
+          <div class="tip-body"><strong>Have the demo pre-loaded tonight.</strong> Don't type queries live. Have the query ready to paste.</div>
+        </div>
+        <div class="tip-card" onclick="toggleTip(this)">
+          <div class="tip-checkbox"><svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.5L3.8 7.5L10 1" stroke="white" stroke-width="2" fill="none" stroke-linecap="round"/></svg></div>
+          <div class="tip-body"><strong>If something breaks,</strong> say "let me show the output from earlier" and switch to screenshots. Have a backup folder ready.</div>
+        </div>
+        <div class="tip-card" onclick="toggleTip(this)">
+          <div class="tip-checkbox"><svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.5L3.8 7.5L10 1" stroke="white" stroke-width="2" fill="none" stroke-linecap="round"/></svg></div>
+          <div class="tip-body"><strong>Don't wait for the demo to finish.</strong> Start narrating while it runs. Silence + spinner = nervous energy.</div>
+        </div>
+        <div class="tip-card" onclick="toggleTip(this)">
+          <div class="tip-checkbox"><svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.5L3.8 7.5L10 1" stroke="white" stroke-width="2" fill="none" stroke-linecap="round"/></svg></div>
+          <div class="tip-body"><strong>Demo order is intentional:</strong> speed first (agents), then depth (graph), then deliverable (report). Don't reorder it.</div>
+        </div>
+      </div>
+
+      <div class="bottom-nav">
+        <button class="btn btn-prev" onclick="goTo(1)">← Architecture</button>
+        <button class="btn btn-next" onclick="goTo(3)">Differentiation →</button>
+      </div>
+    </div>
+
+    <!-- ═══ PAGE 3: DIFFERENTIATION ═══ -->
+    <div class="page" id="page-3">
+      <div class="phase-header">
+        <div class="phase-title-block">
+          <div class="phase-eyebrow">Phase 4 of 5</div>
+          <div class="phase-title">Why this — answer the "so what?" before they ask</div>
+          <div class="phase-goal">Slow down. Judges take notes here. Use the contrast structure: "Most tools do X. We do Y."</div>
+        </div>
+        <div class="timer-badge">
+          <div class="timer-time">3:30 – 4:30</div>
+          <div class="timer-secs">60 seconds</div>
+        </div>
+      </div>
+
+      <div class="section-label">Your script</div>
+
+      <div class="script-card">
+        <div class="script-say">The differentiation — say this slowly</div>
+        <div class="script-text">"Most RAG systems are document chatbots. You upload a PDF and ask questions. SnapMind is different in three ways. First, it's ambient — it indexes as you browse, no manual uploads. Second, it's multi-modal — web pages, PDFs, YouTube transcripts, GitHub repos, screenshots, and CSVs through a single pipeline. Third, it's graph-aware — it builds and queries a knowledge graph, not just a flat vector store."</div>
+      </div>
+
+      <div class="script-card">
+        <div class="script-say">The technical credibility — show you went deep</div>
+        <div class="script-text">"Under the hood: semantic caching with a 0.95 similarity threshold, cross-encoder reranking with a Cohere → local fallback chain, context deduplication using Jaccard similarity, and full multilingual support via Lingo.dev — query translated to English for retrieval, response returned in the user's language."</div>
+      </div>
+
+      <div class="section-label" style="margin-top:24px;">Delivery checklist</div>
+      <div class="tips-grid">
+        <div class="tip-card" onclick="toggleTip(this)">
+          <div class="tip-checkbox"><svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.5L3.8 7.5L10 1" stroke="white" stroke-width="2" fill="none" stroke-linecap="round"/></svg></div>
+          <div class="tip-body"><strong>Slow down on the three differences.</strong> Hold up 1, 2, 3 fingers as you say them. Physical anchors help judges remember.</div>
+        </div>
+        <div class="tip-card" onclick="toggleTip(this)">
+          <div class="tip-checkbox"><svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.5L3.8 7.5L10 1" stroke="white" stroke-width="2" fill="none" stroke-linecap="round"/></svg></div>
+          <div class="tip-body"><strong>"Most tools do X. We do Y"</strong> is a proven judge-friendly structure. Keep the contrast sharp.</div>
+        </div>
+        <div class="tip-card" onclick="toggleTip(this)">
+          <div class="tip-checkbox"><svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.5L3.8 7.5L10 1" stroke="white" stroke-width="2" fill="none" stroke-linecap="round"/></svg></div>
+          <div class="tip-body"><strong>Don't apologize for complexity.</strong> "It's technically complex but here's the simple version" — own it, don't shrink from it.</div>
+        </div>
+        <div class="tip-card" onclick="toggleTip(this)">
+          <div class="tip-checkbox"><svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.5L3.8 7.5L10 1" stroke="white" stroke-width="2" fill="none" stroke-linecap="round"/></svg></div>
+          <div class="tip-body"><strong>Also mention the CLI package</strong> (SnapMind AI on npm) — shows you shipped two products, not one.</div>
+        </div>
+      </div>
+
+      <div class="bottom-nav">
+        <button class="btn btn-prev" onclick="goTo(2)">← Features Demo</button>
+        <button class="btn btn-next" onclick="goTo(4)">Close + Q&amp;A →</button>
+      </div>
+    </div>
+
+    <!-- ═══ PAGE 4: CLOSE + Q&A ═══ -->
+    <div class="page" id="page-4">
+      <div class="phase-header">
+        <div class="phase-title-block">
+          <div class="phase-eyebrow">Phase 5 of 5</div>
+          <div class="phase-title">Close + Q&amp;A prep</div>
+          <div class="phase-goal">Land the close with conviction. Then handle every question without flinching. Expand to reveal answers.</div>
+        </div>
+        <div class="timer-badge">
+          <div class="timer-time">4:30 – 6:00</div>
+          <div class="timer-secs">90 seconds</div>
+        </div>
+      </div>
+
+      <div class="section-label">Your closing statement — memorize every word</div>
+
+      <div class="script-card" style="border: 2px solid #7F77DD;">
+        <div class="script-say">The close — say this with direct eye contact</div>
+        <div class="script-text">"SnapMind isn't just a Chrome extension. It's a research operating system. Every page you visit makes it smarter. Every question makes its knowledge graph richer. The more you use it, the better it gets — and it keeps everything private, with your own API keys. We've built the infrastructure. Now we're building the future of how people do research."</div>
+      </div>
+
+      <div class="warn-box">
+        <strong>⚠️ Stop after the close.</strong> Do not say "that's it" or "so yeah, that's basically everything we did". Let the silence sit for 2 full seconds. Then say: <em>"Happy to go deep on any part of the stack."</em>
+      </div>
+
+      <div class="green-box">
+        <strong>If you're under time,</strong> add: <em>"In the process we've also shipped SnapMind AI — a local-first CLI on npm with the same RAG pipeline, 4 specialized personas, and LanceDB for offline use."</em>
+      </div>
+
+      <div class="section-label" style="margin-top:24px;">Q&amp;A prep — click each question to see the ideal answer</div>
+
+      <div class="qa-item" onclick="toggleQA(this)">
+        <div class="qa-q">"Why not just use Notion AI or Perplexity?" <span class="qa-arrow">▶</span></div>
+        <div class="qa-a">Those are general-purpose. SnapMind is context-aware of <em>your specific research session</em>. It knows the 30 pages you've read this week, cross-references them, and builds a knowledge graph. Perplexity forgets you after every query. Notion AI only knows what's already in Notion.</div>
+      </div>
+
+      <div class="qa-item" onclick="toggleQA(this)">
+        <div class="qa-q">"How do you handle hallucination?" <span class="qa-arrow">▶</span></div>
+        <div class="qa-a">Every answer is grounded in indexed content with block-level citations. The cross-encoder reranker removes low-relevance chunks before they reach the LLM. Context deduplication removes contradictory near-duplicate passages. And the model is explicitly instructed to say "I don't know" if context is insufficient.</div>
+      </div>
+
+      <div class="qa-item" onclick="toggleQA(this)">
+        <div class="qa-q">"What's your embedding model and why that one?" <span class="qa-arrow">▶</span></div>
+        <div class="qa-a">Gemini embedding-001 producing 3072-dimension vectors. Chosen for multilingual capability and because it outperforms OpenAI's ada-002 on MTEB benchmarks for document retrieval. We have a Mistral fallback if Gemini is unavailable.</div>
+      </div>
+
+      <div class="qa-item" onclick="toggleQA(this)">
+        <div class="qa-q">"How does the multi-agent system avoid getting stuck?" <span class="qa-arrow">▶</span></div>
+        <div class="qa-a">Hard context budget of 8000 characters. Once it's full, synthesis triggers regardless. The SlicerAgent also caps each scraped page at 6000 characters — so one bad URL can't blow the whole budget. Plus exponential backoff on every API call with a 5-minute hard timeout on crawl jobs.</div>
+      </div>
+
+      <div class="qa-item" onclick="toggleQA(this)">
+        <div class="qa-q">"Is it production-ready?" <span class="qa-arrow">▶</span></div>
+        <div class="qa-a">Production-grade architecture: ThreadPoolExecutor for parallel embedding, exponential backoff on all DB operations, HNSW indexes for sub-millisecond vector lookup, connection pooling via psycopg, full Docker deployment, and 12 test files covering every pipeline component. It's running on Hugging Face Spaces right now.</div>
+      </div>
+
+      <div class="qa-item" onclick="toggleQA(this)">
+        <div class="qa-q">"What's next on the roadmap?" <span class="qa-arrow">▶</span></div>
+        <div class="qa-a">Collaborative research notebooks for teams, autonomous agents that can fill in forms and navigate dynamically, and fine-tuned domain-specific embedding models. The SnapMind AI CLI is already on npm — same RAG pipeline, terminal-native with LanceDB for fully offline use.</div>
+      </div>
+
+      <div class="bottom-nav">
+        <button class="btn btn-prev" onclick="goTo(3)">← Differentiation</button>
+        <button class="btn btn-next" onclick="goTo(0)" style="background:#1D9E75;">Start Over ↺</button>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  let current = 0;
+
+  function goTo(n) {
+    document.getElementById('page-' + current).classList.remove('active');
+    document.getElementById('nav-' + current).classList.remove('active');
+    if (current < n) document.getElementById('nav-' + current).classList.add('done');
+    else document.getElementById('nav-' + current).classList.remove('done');
+
+    current = n;
+    document.getElementById('page-' + current).classList.add('active');
+
+    for (let i = 0; i < 5; i++) {
+      const nav = document.getElementById('nav-' + i);
+      const seg = document.getElementById('seg-' + i);
+      nav.classList.remove('active', 'done');
+      seg.className = 'progress-seg';
+      if (i < current) { nav.classList.add('done'); seg.classList.add('done'); }
+      else if (i === current) { nav.classList.add('active'); seg.classList.add('active'); }
+    }
+
+    window.scrollTo(0, 0);
+  }
+
+  function toggleTip(el) {
+    el.classList.toggle('checked');
+  }
+
+  function toggleQA(el) {
+    el.classList.toggle('open');
+  }
+</script>
+</body>
+</html>
